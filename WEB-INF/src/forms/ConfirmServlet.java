@@ -6,9 +6,11 @@ import java.util.Objects;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class ConfirmServlet extends HttpServlet {
     // POSTメソッドのリクエスト受信時に実行されるメソッド
@@ -50,9 +52,24 @@ public class ConfirmServlet extends HttpServlet {
     	
     	if( !errorList.isEmpty() ) {
     		request.setAttribute("errorList", errorList);
+    	} else {
+    		HttpSession session = request.getSession();
+    		
+    		session.setAttribute("name", name);
+    		session.setAttribute("email", email);
+    		session.setAttribute("message", message);
+    		
+    		setCookie(response, "name", name);
+    		setCookie(response, "email", email);
     	}
     	
     	RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/pages/confirmPage.jsp");
     	dispatcher.forward(request, response);
+    }
+    
+    private void setCookie(HttpServletResponse response, String name, String value ) {
+    	Cookie cookie = new Cookie(name, value);
+    	cookie.setMaxAge(60 * 60 * 24 * 1);
+    	response.addCookie(cookie);
     }
 }
