@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="java.util.ArrayList" %>
 
 <html>
 	<head>
@@ -26,12 +27,29 @@
 			</tr>
 		</table>
 		
+		<%
+		ArrayList<String> errorList = (ArrayList<String>) request.getAttribute("errorList");
+		
+		String disableConfirm = (errorList != null) ? "disabled" : "";
+		%>
+		
 		<p>
 			<%-- 確定ボタン（登録に成功した前提で完了画面に遷移） --%>
-			<button onclick="location.href='<%= request.getContextPath() %>/complete';">確定</button>
+			<button
+				onclick="location.href='<%= request.getContextPath() %>/complete';"
+				<%= disableConfirm %>
+			>確定</button>
 			
 			<%-- キャンセルボタン（前の画面に戻る） --%>
 			<button onclick="history.back();">キャンセル</button>
 		</p>
+		
+		<%
+		if( errorList != null ){
+			for( String errorMessage : errorList ){
+				out.println("<font color=\"red\">" + errorMessage + "</font><br>");
+			}
+		}
+		%>
 	</body>
 </html>
